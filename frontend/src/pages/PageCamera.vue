@@ -28,7 +28,7 @@
       </div>
 
       <div class="row justify-center q-mt-lg">     
-        <q-btn unelevated rounded color="primary" label="Post Image" /> 
+        <q-btn @click="addPost" unelevated rounded color="primary" label="Post Image" /> 
       </div>
 
     </div>   
@@ -182,6 +182,33 @@ export default defineComponent({
         message: 'Could not find your location.'
       })
       this.locationLoading = false
+    },
+    addPost () {
+      let formData = new FormData()
+      //formData.append('id', this.post.id)
+      formData.append('caption', this.post.caption)
+      formData.append('location', this.post.location)
+      //formData.append('date', this.post.date)
+      formData.append('image', this.post.photo)
+
+      axios.post(`${ process.env.API }/posts`, formData) // Fazendo a requisição no API
+        .then((resp) => {
+          console.log(resp.data.posts)        
+          this.posts = resp.data.posts
+          this.$q.loading.hide() // Encerrando o loading
+        })
+        .catch((err) => {
+          // Chamando o plugin de notificação
+          this.$q.notify({
+            position: 'center', // Posição que a mensagem aparecerá
+            timeout: 3000, // Tempo de exposição da mensagem no browser (3000 = 3 segundos)
+            color: 'negative', // Cor do background da mensagem
+            textColor: 'white', // Cor do texto da mensagem
+            actions: [{ icon: 'check', color: 'white' }], // Ícone e cor do ícone
+            message: 'Erro na requisição. Erro: ' + err // Texto da mensagem
+          })
+          this.$q.loading.hide() // Encerrando o loading
+        })
     }
   },  
   mounted () {

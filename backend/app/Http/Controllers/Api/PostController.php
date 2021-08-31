@@ -40,10 +40,11 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {   
+       
         $dataform = [];            
         $dataform['caption'] = $request->caption;
-        $dataform['location'] = $request->location;       
-
+        $dataform['location'] = $request->location;     
+               
         $post = new Post;
 
 
@@ -52,7 +53,7 @@ class PostController extends Controller
         // Se informou o arquivo, retorna um boolean
         $fileExists = $request->hasFile('image');
         if(!$fileExists) {
-            return response()->json(['error' => 'Não é um arquivo de imagem válido!'], 404);
+            return response()->json(['error' => 'Não é um arquivo de imagem válido! [s4s4s]'], 404);
         }
 
         // Retorna mime type do arquivo (Exemplo image/png)
@@ -62,7 +63,7 @@ class PostController extends Controller
 
         if(!in_array($mimeType,  $arrayMimeTypes))
         {
-            return response()->json(['error' => 'Não é um arquivo de imagem válido!'], 404);
+            return response()->json(['error' => 'Não é um arquivo de imagem válido! [g4hg4h5]'], 404);
         }
 
         // Extensão do arquivo
@@ -86,13 +87,13 @@ class PostController extends Controller
         $isValid = $request->file('image')->isValid();
 
         if($isValid != 1) {
-            return response()->json(['error' => 'Não é um arquivo de imagem válido!'], 404);
+            return response()->json(['error' => 'Não é um arquivo de imagem válido! [wewe878]'], 404);
         }        
 
-        $imageName = md5(rand(1, 9999999)) . '.jpg';
+        $imageName = md5(rand(1, 9999999999999999)) . '.jpg';
 
         //Movendo o arquivo da pasta temporária para storage (que tem um espelho em public)
-        $upload = $request->image->storeAs('media/uploadsimagesprofile', $imageName);
+        $upload = $request->image->storeAs('media/uploads-posts-images', $imageName);
 
         $dataform['image'] = $upload;
 

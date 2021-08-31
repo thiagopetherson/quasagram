@@ -75,7 +75,9 @@ export default {
       this.$q.loading.show({ // Chamando o loading
         delay: 400
       })
-      axios.get('http://127.0.0.1:8000/api/posts') // Fazendo a requisição no API
+      // Usamos variáveis de ambientes que guardam nossa url da requisição (configuramos em quasar.conf)
+      // ... em build e env
+      axios.get(`${ process.env.API }/posts`) // Fazendo a requisição no API
         .then((resp) => {
           console.log(resp.data.posts)        
           this.posts = resp.data.posts
