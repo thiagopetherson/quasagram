@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response; // Chamando a classe de respostas (como as de erros por exemplo)
 
-
 use App\Models\Post;
 
 class PostController extends Controller
@@ -48,8 +47,9 @@ class PostController extends Controller
         $post = new Post;
 
 
-        $file = $request->file('image');        
-
+        $file = $request->file('image');    
+        
+       
         // Se informou o arquivo, retorna um boolean
         $fileExists = $request->hasFile('image');
         if(!$fileExists) {
@@ -68,13 +68,16 @@ class PostController extends Controller
 
         // Extensão do arquivo
         $extension = $request->image->getClientOriginalExtension();
-
+        
+        /*
         $arrayExtensions = ['PNG','JPG','JPEG','png','jpg','jpeg'];
 
+        
         if(!in_array($extension, $arrayExtensions))
         {
             return response()->json(['error' => 'O arquivo não tem uma extensão válida!'], 404);
         }
+        */
 
         // Tamanho do arquivo
         $fileSize = $request->image->getSize();

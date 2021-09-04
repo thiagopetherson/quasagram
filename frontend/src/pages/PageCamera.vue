@@ -8,7 +8,7 @@
 
     <div class="text-center q-pa-md">
 
-      <q-btn v-if="hasCameraSupport" @click="captureImage" color="grey-10" icon="eva-camera" size="lg" round />
+      <q-btn v-if="hasCameraSupport" @click="captureImage" :disable="imageCaptured" color="grey-10" icon="eva-camera" size="lg" round />
       <q-file v-else v-model="imageUpload" @input="captureImageFallback" label="Chose a image" outlined accept="image/*">
         <template v-slot:prepend>
           <q-icon name="eva-attach-outline" />
@@ -16,7 +16,7 @@
       </q-file>
 
       <div class="row justify-center q-ma-md">
-        <q-input v-model="post.caption" class="col col-sm-6" label="Caption" dense />
+        <q-input v-model="post.caption" class="col col-sm-6" label="Caption *" dense />
       </div>
 
       <div class="row justify-center q-ma-md">
@@ -28,7 +28,7 @@
       </div>
 
       <div class="row justify-center q-mt-lg">     
-        <q-btn @click="addPost" unelevated rounded color="primary" label="Post Image" /> 
+        <q-btn @click="addPost" :disable="!post.caption || !post.photo" unelevated rounded color="primary" label="Post Image" /> 
       </div>
 
     </div>   
@@ -38,6 +38,7 @@
 
 <script>
 import { defineComponent } from 'vue'
+import axios from 'axios'
 import { uid } from 'quasar' // Gerador de ID's únicos
 require('md-gum-polyfill') // Instalamos a biblioteca Poliyfill (npm install --save md-gum-polyfill)
 
@@ -184,17 +185,38 @@ export default defineComponent({
       this.locationLoading = false
     },
     addPost () {
+      this.$q.loading.show({ // Chamando o loading
+        delay: 400
+      })
+      
       let formData = new FormData()
       //formData.append('id', this.post.id)
       formData.append('caption', this.post.caption)
       formData.append('location', this.post.location)
       //formData.append('date', this.post.date)
-      formData.append('image', this.post.photo)
+      formData.append('image', this.post.photo)      
 
       axios.post(`${ process.env.API }/posts`, formData) // Fazendo a requisição no API
         .then((resp) => {
-          console.log(resp.data.posts)        
-          this.posts = resp.data.posts
+
+          if(resp.status == "200") {
+            this.posts = resp.data.posts
+
+            this.$q.notify({
+              position: 'center', // Posição que a mensagem aparecerá
+              timeout: 4500, // Tempo de exposição da mensagem no browser (3000 = 3 segundos)
+              color: 'positive', // Cor do background da mensagem
+              textColor: 'white', // Cor do texto da mensagem
+              actions: [{ icon: 'check', color: 'white' }], // Ícone e cor do ícone
+              message: 'Imagem Armazenada com Sucesso' // Texto da mensagem
+            })
+          }     
+          
+          this.post.caption = ""
+          this.post.location = ""
+          this.post.photo = null
+          this.initCamera()
+          
           this.$q.loading.hide() // Encerrando o loading
         })
         .catch((err) => {

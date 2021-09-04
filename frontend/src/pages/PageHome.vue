@@ -21,7 +21,7 @@
 
             <q-separator />
 
-              <q-img :src="post.image" />
+              <q-img :src="`http://127.0.0.1:8000/storage/${post.image}`" />
             
             <q-card-section>
               <div>{{ post.caption }}</div>
